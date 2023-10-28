@@ -1,10 +1,8 @@
 package com.example.busProject.Timetable;
 
 import com.example.busProject.API;
-import com.example.busProject.Location.FetchData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,23 +17,21 @@ import java.util.Map;
 @Slf4j
 public class TimetableService {
 
+    // nationalExpressId = "12856"
+    // stagecoachId = "6847"
     private static final String url = "https://data.bus-data.dft.gov.uk/api/v1/dataset/";
-    private final String nationalExpressId = "12856";
-    private final String stagecoachId = "6847";
 
+    /*
     public static void getTimetableData() {
         FetchData.getData(API.forTimetableData, "idfiller");
     }
+    */
 
     @Autowired
     private RestTemplate restTemplate;
 
-
     public Object getAllTimetables() {
         try {
-            //set all query params
-            HttpHeaders headers = new HttpHeaders();
-
             //map of all path params (might be able to just concatenate the path to url)
             Map<String, String> pathParams = new HashMap<>();
             pathParams.put("datasetId", "4065");//order of path params matters

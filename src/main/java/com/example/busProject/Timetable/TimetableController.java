@@ -13,8 +13,8 @@ public class TimetableController {
     //need to edit
     private final TimetableService timetableService;
 
-    @GetMapping("/get-bus-timetable-data")
-    public ResponseEntity<?> callBODsToGetTimetableData(){
+    @GetMapping("/data")
+    public ResponseEntity<?> callBODsToGetTimetableData() {
         return ResponseEntity.ok(timetableService.getAllTimetables());
     }
 }
