@@ -19,10 +19,6 @@ import java.util.Map;
 @Slf4j
 public class TimetableService {
 
-    /*
-    make a method which concatenates the url with {pathParamName}, so we can dynamically have variable
-    path parameters as well as variable query parameters.
-    */
     private static final String url = "https://data.bus-data.dft.gov.uk/api/v1/dataset/";
     private final String nationalExpressId = "12856";
     private final String stagecoachId = "6847";
