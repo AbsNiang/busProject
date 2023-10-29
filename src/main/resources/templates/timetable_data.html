@@ -1,35 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Timetable Data</title>
+    <title>Bus Timetable</title>
 </head>
 <body>
-<h1>Timetable Information</h1>
+<h1>Bus Timetable</h1>
+<div id="timetableData"></div>
 
-<div th:if="${timetable != null}">
-    <p><strong>ID:</strong> <span th:text="${timetable.id}"></span></p>
-    <p><strong>Operator Name:</strong> <span th:text="${timetable.operatorName}"></span></p>
-    <!-- Add more fields as needed -->
-
-    <h2>Localities:</h2>
-    <ul>
-        <li th:each="locality : ${timetable.localities}">
-            <span th:text="${locality.name}"></span>
-        </li>
-    </ul>
-
-    <h2>Admin Areas:</h2>
-    <ul>
-        <li th:each="area : ${timetable.adminAreas}">
-            <span th:text="${area.name}"></span>
-        </li>
-    </ul>
-
-    <!-- Display more information from your JSON -->
-</div>
-<div th:unless="${timetable != null}">
-    <p>No timetable data available.</p>
-</div>
+<script>
+    // Fetch data from the API endpoint
+    fetch('/timetable/data')
+        .then(response => response.json())
+        .then(data => {
+            // Process and display data on the HTML page
+            document.getElementById('timetableData').innerText = JSON.stringify(data, null, 2);
+            // You can format and display the data as needed in your HTML
+        })
+        .catch(error => console.error('Error:', error));
+</script>
 </body>
 </html>

@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/datafeed")
+@RequestMapping("/location")
 @RequiredArgsConstructor
 public class LocationController {
     //need to edit
     private final LocationService locationService;
 
-    @GetMapping("/get-bus-timetable-data")
-    public ResponseEntity<?> callBODsToGetTimetableData(){
-    return (ResponseEntity<?>) ResponseEntity.ok();
+    @GetMapping("/get-overall-data")
+    public ResponseEntity<?> callBODsToGetLocationData() {
+        return ResponseEntity.ok(locationService.getOverallLocationData());
     }
 }

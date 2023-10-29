@@ -19,7 +19,7 @@ public class TimetableService {
 
     // nationalExpressId = "12856"
     // stagecoachId = "6847"
-    private static final String url = "https://data.bus-data.dft.gov.uk/api/v1/dataset/";
+    private static final String url = API.apiMainURL + "dataset/";
 
     /*
     public static void getTimetableData() {
@@ -34,7 +34,7 @@ public class TimetableService {
         try {
             //map of all path params (might be able to just concatenate the path to url)
             Map<String, String> pathParams = new HashMap<>();
-            pathParams.put("datasetId", "4065");//order of path params matters
+            pathParams.put("datasetId", "464");// {datasetId}/download downloads the zip w all the data
             String urlWithPaths = addPathsToUrl(pathParams);
 
             //map of all query params
@@ -53,7 +53,7 @@ public class TimetableService {
     }
 
     //builds the url by adding the query parameters dynamically
-    private Object buildURLWithPathQueryParams(String urlWithPaths,Map<String, String> pathParams,
+    private Object buildURLWithPathQueryParams(String urlWithPaths, Map<String, String> pathParams,
                                                Map<String, String> queryParams) {
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(urlWithPaths);
@@ -64,7 +64,7 @@ public class TimetableService {
         queryParams.forEach(finalBuilder::queryParam);
 
         String finalUrl = finalBuilder.toUriString();
-        System.out.println(finalUrl);
+//        System.out.println(finalUrl);
         return restTemplate.getForObject(finalUrl, Object.class);
     }
 
