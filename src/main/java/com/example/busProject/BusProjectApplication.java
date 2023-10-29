@@ -11,7 +11,7 @@ public class BusProjectApplication {
 	}
 
 
-	//This @Bean was used to store the csv data in the DB
+	//This @Bean was used to store the csv data in the DB, not needed anymore
 //	@Bean
 //	public CommandLineRunner runDataImport(SaveCSVDataInDB dataImporter) {
 //		return args -> {
@@ -20,3 +20,4 @@ public class BusProjectApplication {
 //		};
 //	}
 }
+//look into dataset/?search=west+midlands to get gazetteer_ids and use that.
