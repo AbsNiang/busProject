@@ -34,7 +34,7 @@ public class TimetableService {
         try {
             //map of all path params (might be able to just concatenate the path to url)
             Map<String, String> pathParams = new HashMap<>();
-            pathParams.put("datasetId", "464");// {datasetId}/download downloads the zip w all the data
+            //pathParams.put("datasetId", "464");// {datasetId}/download downloads the zip w all the data
             String urlWithPaths = addPathsToUrl(pathParams);
 
             //map of all query params
