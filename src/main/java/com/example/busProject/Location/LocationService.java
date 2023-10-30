@@ -15,7 +15,7 @@ import java.util.*;
 @Slf4j
 public class LocationService {
     //boundingBox is a lot more useful, allows us to automate choosing services to look at
-    private final String url = API.apiMainURL + "datafeed/";
+    private final String url = API.BODSApiMainURL + "datafeed/";
 
     //sets boundingBox parameters
     private static String bbParams(double minLong, double minLat, double maxLong, double maxLat) {//longitude and latitude
@@ -40,7 +40,7 @@ public class LocationService {
             Map<String, String> queryParams = new HashMap<>();
             queryParams.put("boundingBox", "51.401,51.509,0.01,0.201");
             queryParams.put("lineRef", "12X");
-            queryParams.put("api_key", API.key);
+            queryParams.put("api_key", API.BODSKey);
 
             //set headers
             HttpHeaders headers = new HttpHeaders();

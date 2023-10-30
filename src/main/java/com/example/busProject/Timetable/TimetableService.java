@@ -19,8 +19,8 @@ public class TimetableService {
 
     // nationalExpressId = "12856"
     // stagecoachId = "6847"
-    private static final String url = API.apiMainURL + "dataset/";
-
+    private static final String bodsUrl = API.BODSApiMainURL + "dataset/";
+    private static final String tfwmUrl = API.TFWMApiMainURL + "line/";
     /*
     public static void getTimetableData() {
         FetchData.getData(API.forTimetableData, "idfiller");
@@ -35,11 +35,11 @@ public class TimetableService {
             //map of all path params (might be able to just concatenate the path to url)
             Map<String, String> pathParams = new HashMap<>();
             //pathParams.put("datasetId", "464");// {datasetId}/download downloads the zip w all the data
-            String urlWithPaths = addPathsToUrl(pathParams);
+            String urlWithPaths = addPathsToUrl(bodsUrl, pathParams);
 
             //map of all query params
             Map<String, String> queryParams = new HashMap<>();
-            queryParams.put("api_key", API.key);
+            queryParams.put("api_key", API.BODSKey);
             //Makes a call to the BODS API
             return buildURLWithPathQueryParams(urlWithPaths, pathParams, queryParams);
         } catch (Exception e) {
@@ -64,15 +64,38 @@ public class TimetableService {
         queryParams.forEach(finalBuilder::queryParam);
 
         String finalUrl = finalBuilder.toUriString();
-//        System.out.println(finalUrl);
+        System.out.println(finalUrl);
         return restTemplate.getForObject(finalUrl, Object.class);
     }
 
-    private String addPathsToUrl(Map<String, String> pathParams) {
-        StringBuilder extendedUrl = new StringBuilder(url);
+    private String addPathsToUrl(String urlToUse,Map<String, String> pathParams) {
+        StringBuilder extendedUrl = new StringBuilder(urlToUse);
         for (String key : pathParams.keySet()) {
             extendedUrl.append("{").append(key).append("}").append("/");
         }
         return extendedUrl.toString();
+    }
+
+    public Object getLineRoutes() {
+        try {
+            //map of all path params (might be able to just concatenate the path to url)
+            Map<String, String> pathParams = new HashMap<>();
+            pathParams.put("route", "route");// want to get the line route
+            String urlWithPaths = addPathsToUrl(tfwmUrl, pathParams);
+
+            //map of all query params
+            Map<String, String> queryParams = new HashMap<>();
+            queryParams.put("app_id", API.TFWMAppId);
+            queryParams.put("app_key", API.TFWMAppKey);
+            //Makes a call to the BODS API
+            return buildURLWithPathQueryParams(urlWithPaths, pathParams, queryParams);
+        } catch (Exception e) {
+            log.error("something went wrong when trying to get from the BODS API", e);
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Exception while calling API",
+                    e
+            );
+        }
     }
 }

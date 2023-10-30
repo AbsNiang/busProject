@@ -21,3 +21,5 @@ public class BusProjectApplication {
 //	}
 }
 //look into dataset/?search=west+midlands to get gazetteer_ids and use that.
+//also look into the GTFS RT stuff with routeID, StartTimeAfter for later on
+//in TFWM api /line/{id}/stoppoints will give us stoppoints on that line, we want to find out stoppoints though
