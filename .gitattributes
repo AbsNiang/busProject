@@ -1,0 +1,2 @@
+NAPTAN/overall_data_catalogue.csv filter=lfs diff=lfs merge=lfs -text
+NAPTAN/timetables_data_catalogue.csv filter=lfs diff=lfs merge=lfs -text
