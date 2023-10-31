@@ -12,17 +12,17 @@ public class TimetableController {
     //need to edit
     private final TimetableService timetableService;
 
-//    @GetMapping("/")
-//    public String timetableHome() {
-//        return "timetable"; //returns the next view to display.
-//    }
     @RequestMapping("/dataset")
     public ResponseEntity<?> getTimetableDatasets() { // uses BODS
         return ResponseEntity.ok(timetableService.getAllTimetables());
     }
 
+//        @RequestMapping("/line-routes")
+//    public ResponseEntity<?> getLineRoutes() { // uses TFWM
+//        return ResponseEntity.ok(timetableService.getLineRoutes());
+//    }
     @RequestMapping("/line-routes")
-    public ResponseEntity<?> getLineRoutes() { // uses TFWM
-        return ResponseEntity.ok(timetableService.getLineRoutes());
+    public ResponseEntity<String> getLineRoutes() { // uses TFWM
+        return ResponseEntity.ok(timetableService.test());
     }
 }
