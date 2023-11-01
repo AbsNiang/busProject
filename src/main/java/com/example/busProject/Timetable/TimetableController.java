@@ -9,20 +9,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/timetable")
 @RequiredArgsConstructor
 public class TimetableController {
-    //need to edit
-    private final TimetableService timetableService;
+
+    private final LineService lineService;
+    private final StopPointService stopPointService;
 
     @RequestMapping("/dataset")
     public ResponseEntity<?> getTimetableDatasets() { // uses BODS
-        return ResponseEntity.ok(timetableService.getAllTimetables());
+        return ResponseEntity.ok(lineService.getAllTimetables());
     }
 
-//        @RequestMapping("/line-routes")
-//    public ResponseEntity<?> getLineRoutes() { // uses TFWM
-//        return ResponseEntity.ok(timetableService.getLineRoutes());
-//    }
+    //move this to a separate controller after
+    @RequestMapping("/stops")
+    public ResponseEntity<String> getStopPointsBySearch() {
+        return ResponseEntity.ok(stopPointService.test());
+    }
+
     @RequestMapping("/line-routes")
     public ResponseEntity<String> getLineRoutes() { // uses TFWM
-        return ResponseEntity.ok(timetableService.test());
+        return ResponseEntity.ok(lineService.getLineRouteData());
     }
 }
