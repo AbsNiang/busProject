@@ -1,6 +1,10 @@
 package com.example.busProject.StopPoint;
 
 import com.example.busProject.API;
+import com.example.busProject.Line.Objects.ArrayOfLine;
+import com.example.busProject.Line.Objects.Line;
+import com.example.busProject.Line.Objects.MatchedRoute;
+import com.example.busProject.Line.Objects.RouteSections;
 import com.example.busProject.Timetable.General;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -28,6 +34,50 @@ public class StopPointService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    //returns all the unique stop point ids that correspond to the name
+    public String searchForStop(ArrayOfLine arrayOfLine, String nameSearch) {
+        try {
+            nameSearch = nameSearch.toLowerCase();
+            List<String> stopPointIds = new ArrayList<>();
+            if (arrayOfLine != null) {
+                List<Line> lines = arrayOfLine.getLine();
+                if (lines != null) {
+                    for (Line line : lines) {
+
+                        RouteSections routeSections = line.getRouteSections();
+                        List<MatchedRoute> matchedRoutes = routeSections.getMatchedRoute();
+                        for (MatchedRoute matchedRoute : matchedRoutes) {
+                            String name = matchedRoute.getName().toLowerCase();
+
+                            if (name.contains(nameSearch)) {
+                                String[] nameSections = name.split(" to ");
+                                if (nameSections[0].contains(nameSearch)) {//originator is the search
+                                    String originatorId = matchedRoute.getOriginator();
+                                    if (!stopPointIds.contains(originatorId)) {
+                                        stopPointIds.add(originatorId);//gets the originator id
+                                    }
+                                } else {//if it is the destination
+                                    String destinationId = matchedRoute.getDestination();
+                                    if (!stopPointIds.contains(destinationId)) {
+                                        stopPointIds.add(matchedRoute.getDestination());//gets the destination id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return stopPointIds.toString();
+        } catch (Exception e) {
+            log.error("something went wrong when trying to handle the object", e);
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Exception while handling object",
+                    e
+            );
+        }
+    }
 
     //maybe get all the stops for warwick and iterate through (05, 04, 03, 02, 01)
     private String getStopPointById(String id) {
