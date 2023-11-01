@@ -1,4 +1,4 @@
-package com.example.busProject.Timetable.Objects;
+package com.example.busProject.StopPoint.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,28 +6,24 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "Id",
-    "Name",
-    "ModeName",
-    "Uri",
-    "Operators",
-    "RouteSections"
+        "Id",
+        "Name",
+        "Type",
+        "Uri",
+        "Operators"
 })
-
-public class Line {
+public class Identifier {
 
     @JsonProperty("Id")
     private String id;
     @JsonProperty("Name")
     private String name;
-    @JsonProperty("ModeName")
-    private String modeName;
+    @JsonProperty("Type")
+    private String type;
     @JsonProperty("Uri")
     private String uri;
     @JsonProperty("Operators")
     private Operators operators;
-    @JsonProperty("RouteSections")
-    private RouteSections routeSections;
 
     @JsonProperty("Id")
     public String getId() {
@@ -49,14 +45,14 @@ public class Line {
         this.name = name;
     }
 
-    @JsonProperty("ModeName")
-    public String getModeName() {
-        return modeName;
+    @JsonProperty("Type")
+    public String getType() {
+        return type;
     }
 
-    @JsonProperty("ModeName")
-    public void setModeName(String modeName) {
-        this.modeName = modeName;
+    @JsonProperty("Type")
+    public void setType(String type) {
+        this.type = type;
     }
 
     @JsonProperty("Uri")
@@ -77,16 +73,6 @@ public class Line {
     @JsonProperty("Operators")
     public void setOperators(Operators operators) {
         this.operators = operators;
-    }
-
-    @JsonProperty("RouteSections")
-    public RouteSections getRouteSections() {
-        return routeSections;
-    }
-
-    @JsonProperty("RouteSections")
-    public void setRouteSections(RouteSections routeSections) {
-        this.routeSections = routeSections;
     }
 
 }

@@ -1,6 +1,7 @@
-package com.example.busProject.Timetable;
+package com.example.busProject.StopPoint;
 
 import com.example.busProject.API;
+import com.example.busProject.Timetable.General;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;

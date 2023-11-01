@@ -1,4 +1,5 @@
-package com.example.busProject.Timetable.Objects;
+
+package com.example.busProject.Line.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "Id"
 })
 
-public class Operator {
+public class Operator__1 {
 
     @JsonProperty("Name")
     private String name;

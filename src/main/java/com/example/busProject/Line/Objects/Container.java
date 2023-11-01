@@ -1,4 +1,4 @@
-package com.example.busProject.Timetable.Objects;
+package com.example.busProject.Line.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

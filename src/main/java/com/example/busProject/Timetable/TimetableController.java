@@ -10,22 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TimetableController {
 
-    private final LineService lineService;
-    private final StopPointService stopPointService;
+    private final TimetableService timetableService;
 
     @RequestMapping("/dataset")
     public ResponseEntity<?> getTimetableDatasets() { // uses BODS
-        return ResponseEntity.ok(lineService.getAllTimetables());
+        return ResponseEntity.ok(timetableService.getAllTimetables());
     }
 
     //move this to a separate controller after
-    @RequestMapping("/stops")
-    public ResponseEntity<String> getStopPointsBySearch() {
-        return ResponseEntity.ok(stopPointService.test());
-    }
 
-    @RequestMapping("/line-routes")
-    public ResponseEntity<String> getLineRoutes() { // uses TFWM
-        return ResponseEntity.ok(lineService.getLineRouteData());
-    }
+
 }
+
+//University Interchange lat = 52.37946319580078, long = -1.5626189708709717
