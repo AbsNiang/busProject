@@ -5,7 +5,11 @@ import com.example.busProject.Line.Objects.ArrayOfLine;
 import com.example.busProject.Line.Objects.Line;
 import com.example.busProject.Line.Objects.MatchedRoute;
 import com.example.busProject.Line.Objects.RouteSections;
+import com.example.busProject.StopPoint.Objects.Container;
+import com.example.busProject.StopPoint.Objects.StopPoints;
 import com.example.busProject.Timetable.General;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -35,6 +39,7 @@ public class StopPointService {
     @Autowired
     private RestTemplate restTemplate;
 
+    //add searching the originator name / destination name also
     //returns all the unique stop point ids that correspond to the name
     public String searchForStop(ArrayOfLine arrayOfLine, String nameSearch) {
         try {
@@ -49,7 +54,6 @@ public class StopPointService {
                         List<MatchedRoute> matchedRoutes = routeSections.getMatchedRoute();
                         for (MatchedRoute matchedRoute : matchedRoutes) {
                             String name = matchedRoute.getName().toLowerCase();
-
                             if (name.contains(nameSearch)) {
                                 String[] nameSections = name.split(" to ");
                                 if (nameSections[0].contains(nameSearch)) {//originator is the search
@@ -62,6 +66,16 @@ public class StopPointService {
                                     if (!stopPointIds.contains(destinationId)) {
                                         stopPointIds.add(matchedRoute.getDestination());//gets the destination id
                                     }
+                                }
+                            } else if (matchedRoute.getOriginationName().toLowerCase().contains(nameSearch)) {
+                                String originatorId = matchedRoute.getOriginator();
+                                if (!stopPointIds.contains(originatorId)) {
+                                    stopPointIds.add(originatorId);//gets the originator id
+                                }
+                            } else if (matchedRoute.getDestinationName().toLowerCase().contains(nameSearch)) {
+                                String destinationId = matchedRoute.getDestination();
+                                if (!stopPointIds.contains(destinationId)) {
+                                    stopPointIds.add(matchedRoute.getDestination());//gets the destination id
                                 }
                             }
                         }
@@ -151,26 +165,29 @@ public class StopPointService {
         }
     }
 
-//  public String getStopBySearchAsObjects(String jsonString) {
-//        try {
-//            //maps json data to an object
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//            Container container = objectMapper.readValue(jsonString, Container.class);
-//            ArrayOfLine arrayOfLine = container.getArrayOfLine();
-//            StringBuilder concatenatedLineNames = new StringBuilder();
-//            if (arrayOfLine != null) {
-//                List<Line> lines = arrayOfLine.getLine();
-//                if (lines != null) {
-//                    for (Line line : lines) {
-//                        concatenatedLineNames.append(" ").append(line.getName());
-//                    }
-//                }
-//            }
-//            return concatenatedLineNames.toString();
-//        } catch (Exception e) {
-//            log.error("Something went wrong when trying to fetch and process JSON data for stop points", e);
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Exception while processing JSON data", e);
-//        }
-//    }
-}
+    /* Loop through the list<String> of ids and print all the arrivals
+     * OR check for all the lines that go to that stop, if they also go to the destination stop
+     * To check if you can access on the line, try using StopPoint/{id}/canReachOnline/{lineId}
+     * (make sure direction is correct)
+     * */
+    private StopPoints mapStopPointToObject(String jsonString) {
+        try {
+            //maps json data to an object
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            Container container = objectMapper.readValue(jsonString, Container.class);
+            return container.getStopPoint();
+        } catch (Exception e) {
+            log.error("Something went wrong when trying to fetch and process JSON data for stop points", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Exception while processing JSON data", e);
+        }
+    }
+
+    public String findRouteSectionsForSearch() {
+        return null;
+    }
+
+    public String findRouteSectionsForIds() {
+        return null;
+    }
+}//coventry stop

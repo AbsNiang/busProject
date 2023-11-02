@@ -23,7 +23,7 @@ public class StopPointController {
     @RequestMapping("/uwu")
     public ResponseEntity<String> receiveData() {
         ArrayOfLine arrayOfLine = lineService.sendDataToAnotherController();
-        return ResponseEntity.ok(stopPointService.searchForStop(arrayOfLine, "university of warwick"));
+        return ResponseEntity.ok(stopPointService.searchForStop(arrayOfLine, "coventry rail station"));
     }
 
 }

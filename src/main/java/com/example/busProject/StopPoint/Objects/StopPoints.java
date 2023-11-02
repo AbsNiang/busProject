@@ -1,5 +1,6 @@
 package com.example.busProject.StopPoint.Objects;
 
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -8,18 +9,19 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "StopPoint"
 })
-public class Example {
+public class StopPoints {
 
     @JsonProperty("StopPoint")
-    private StopPoint stopPoint;
+    private List<StopPoint> stopPoint;
 
     @JsonProperty("StopPoint")
-    public StopPoint getStopPoint() {
+    public List<StopPoint> getStopPoint() {
         return stopPoint;
     }
 
     @JsonProperty("StopPoint")
-    public void setStopPoint(StopPoint stopPoint) {
+    public void setStopPoint(List<StopPoint> stopPoint) {
         this.stopPoint = stopPoint;
     }
+
 }
