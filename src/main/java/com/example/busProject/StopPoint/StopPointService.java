@@ -6,7 +6,9 @@ import com.example.busProject.Line.Objects.Line;
 import com.example.busProject.Line.Objects.MatchedRoute;
 import com.example.busProject.Line.Objects.RouteSections;
 import com.example.busProject.StopPoint.Objects.Container;
+import com.example.busProject.StopPoint.Objects.Identifier;
 import com.example.busProject.StopPoint.Objects.StopPoint;
+import com.example.busProject.StopPoint.Objects.StopPointConnection;
 import com.example.busProject.Timetable.General;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -38,16 +37,46 @@ public class StopPointService {
 
     //checks all origin stop point(s) that correlate with the search to see if they connect with the destination stop point(s)
     public String doAll(ArrayOfLine arrayOfLine, String originName, String destinationName) {
-        /*General.getInput("What stop are you leaving from")*/
-
-        // Gets json data
-        String stopPointDataForOriginIds = getStopPointDataFromIDs(searchForStop(arrayOfLine, "university of warwick "));
-        String stopPointDataForDestinationIds = getStopPointDataFromIDs(searchForStop(arrayOfLine, "coventry rail station "));
+        String stopPointDataForOriginIds = getStopPointDataFromIDs(searchForStop(arrayOfLine, originName));
+        String stopPointDataForDestinationIds = getStopPointDataFromIDs(searchForStop(arrayOfLine, destinationName));
         List<StopPoint> originStopPoints = mapStopPointToObject(stopPointDataForOriginIds);
+        List<StopPoint> destinationStopPoints = mapStopPointToObject(stopPointDataForDestinationIds);
 
-        //scan each stop point for a connection with the destination
-        for (StopPoint stopPoint : originStopPoints) {
-            System.out.println(stopPoint.getCommonName());
+        List<StopPointConnection> stopPointConnections = new ArrayList<>();
+
+        // Create a HashMap to store origin stop points and their associated lines
+        Map<String, Set<String>> originLinesMap = new HashMap<>();
+        for (StopPoint originStop : originStopPoints) {
+            Set<String> originLines = new HashSet<>();
+            for (Identifier originLine : originStop.getLines().getIdentifier()) {
+                originLines.add(originLine.getId());
+            }
+            originLinesMap.put(originStop.getId(), originLines);
+        }
+
+        String[] pairs = new String[2]; // 0 is origin, 1 is destination
+        for (StopPoint destinationStop : destinationStopPoints) {
+            Set<String> destinationLines = new HashSet<>();
+            for (Identifier destinationLine : destinationStop.getLines().getIdentifier()) {
+                destinationLines.add(destinationLine.getId());
+            }
+
+            for (String originId : originLinesMap.keySet()) {
+                Set<String> originLines = originLinesMap.get(originId);
+                for (String line : originLines) {
+                    if (destinationLines.contains(line)) {
+                        StopPointConnection stopPointConnection = new StopPointConnection(originId,
+                                destinationStop.getId(),
+                                line);
+                        stopPointConnections.add(stopPointConnection);
+                    }
+                }
+            }
+        }
+        for (StopPointConnection stopPointConnection : stopPointConnections) {
+            System.out.println("Origin ID: " + stopPointConnection.getOriginId()
+                    + ", Destination ID: " + stopPointConnection.getDestinationId()
+                    + ", Line ID: " + stopPointConnection.getRouteId());
         }
         return stopPointDataForOriginIds;
     }
