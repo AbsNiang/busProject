@@ -4,6 +4,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
+import java.util.Scanner;
 
 public class General {
 
@@ -30,5 +31,11 @@ public class General {
             extendedUrl.append("{").append(key).append("}").append("/");
         }
         return extendedUrl.toString();
+    }
+
+    public static String getInput(String prompt){
+        Scanner input = new Scanner(System.in);
+        System.out.println(prompt);
+        return  input.next();
     }
 }

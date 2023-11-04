@@ -6,7 +6,7 @@ import com.example.busProject.Line.Objects.Line;
 import com.example.busProject.Line.Objects.MatchedRoute;
 import com.example.busProject.Line.Objects.RouteSections;
 import com.example.busProject.StopPoint.Objects.Container;
-import com.example.busProject.StopPoint.Objects.StopPoints;
+import com.example.busProject.StopPoint.Objects.StopPoint;
 import com.example.busProject.Timetable.General;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,11 +36,31 @@ public class StopPointService {
         return getStopPointById("43000065305");
     }
 
+    //checks all origin stop point(s) that correlate with the search to see if they connect with the destination stop point(s)
+    public String doAll(ArrayOfLine arrayOfLine, String originName, String destinationName) {
+        /*General.getInput("What stop are you leaving from")*/
+
+        // Gets json data
+        String stopPointDataForOriginIds = getStopPointDataFromIDs(searchForStop(arrayOfLine, "university of warwick "));
+        String stopPointDataForDestinationIds = getStopPointDataFromIDs(searchForStop(arrayOfLine, "coventry rail station "));
+        List<StopPoint> originStopPoints = mapStopPointToObject(stopPointDataForOriginIds);
+
+        //scan each stop point for a connection with the destination
+        for (StopPoint stopPoint : originStopPoints) {
+            System.out.println(stopPoint.getCommonName());
+        }
+        return stopPointDataForOriginIds;
+    }
+
     @Autowired
     private RestTemplate restTemplate;
 
-    //add searching the originator name / destination name also
+    public String getLinesThatJoinStops(List<String> originalStopIds, List<String> destinationStopId) {
+        return null;
+    }
+
     //returns all the unique stop point ids that correspond to the name
+    //if just concatenating string, we can get rid of the list<> for improving space complexity
     public String searchForStop(ArrayOfLine arrayOfLine, String nameSearch) {
         try {
             nameSearch = nameSearch.toLowerCase();
@@ -56,7 +76,7 @@ public class StopPointService {
                             String name = matchedRoute.getName().toLowerCase();
                             if (name.contains(nameSearch)) {
                                 String[] nameSections = name.split(" to ");
-                                if (nameSections[0].contains(nameSearch)) {//originator is the search
+                                if (nameSections[0].trim().contains(nameSearch.trim())) {//originator is the search
                                     String originatorId = matchedRoute.getOriginator();
                                     if (!stopPointIds.contains(originatorId)) {
                                         stopPointIds.add(originatorId);//gets the originator id
@@ -67,12 +87,12 @@ public class StopPointService {
                                         stopPointIds.add(matchedRoute.getDestination());//gets the destination id
                                     }
                                 }
-                            } else if (matchedRoute.getOriginationName().toLowerCase().contains(nameSearch)) {
+                            } else if (matchedRoute.getOriginationName().trim().toLowerCase().contains(nameSearch.trim())) {
                                 String originatorId = matchedRoute.getOriginator();
                                 if (!stopPointIds.contains(originatorId)) {
                                     stopPointIds.add(originatorId);//gets the originator id
                                 }
-                            } else if (matchedRoute.getDestinationName().toLowerCase().contains(nameSearch)) {
+                            } else if (matchedRoute.getDestinationName().trim().toLowerCase().contains(nameSearch.trim())) {
                                 String destinationId = matchedRoute.getDestination();
                                 if (!stopPointIds.contains(destinationId)) {
                                     stopPointIds.add(matchedRoute.getDestination());//gets the destination id
@@ -82,7 +102,18 @@ public class StopPointService {
                     }
                 }
             }
-            return stopPointIds.toString();
+            StringBuilder concatenatedIds = new StringBuilder();
+            int counter = 1;
+            for (String id : stopPointIds) {
+                if (counter < stopPointIds.size()) {
+                    concatenatedIds.append(id).append(",");
+                } else {
+                    concatenatedIds.append(id);
+                }
+                counter++;
+            }
+            System.out.println(stopPointIds);
+            return concatenatedIds.toString();
         } catch (Exception e) {
             log.error("something went wrong when trying to handle the object", e);
             throw new ResponseStatusException(
@@ -93,49 +124,12 @@ public class StopPointService {
         }
     }
 
-    //maybe get all the stops for warwick and iterate through (05, 04, 03, 02, 01)
-    private String getStopPointById(String id) {
-        try {
-            //map of all path params (might be able to just concatenate the path to url)
-            Map<String, String> pathParams = new HashMap<>();
-            pathParams.put("Id", id);
-            pathParams.put("Arrivals", "Arrivals");
-
-            //String urlWithPaths = General.addPathsToUrl(url, pathParams);
-            String urlWithPaths = url + id + "/" + "Arrivals" + "/";
-
-            //map of all query params
-            Map<String, String> queryParams = new HashMap<>();
-            queryParams.put("app_id", API.TFWMAppId);
-            queryParams.put("app_key", API.TFWMAppKey);
-            queryParams.put("formatter", "json");
-            String finalUrl = General.buildURLWithPathQueryParams(urlWithPaths, pathParams, queryParams);
-            // Create ResponseEntity in format 'String' with the json data that is GOT
-            ResponseEntity<String> responseEntity = restTemplate.exchange(
-                    finalUrl,
-                    HttpMethod.GET,
-                    new HttpEntity<>(null),
-                    String.class);
-            System.out.println(responseEntity.getBody());
-            return responseEntity.getBody();
-        } catch (Exception e) {
-            log.error("something went wrong when trying to get from the TFWM", e);
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Exception while calling API",
-                    e
-            );
-        }
-    }
-
     //will probably have to GET from the line/route and then use the object to find the id for the corresponding stop
-    private String getStopPointSearchData() {
+    private String getStopPointData() {
         try {
-            String searchQuery = "university"; //will be replaced later
             //map of all path params (might be able to just concatenate the path to url)
             Map<String, String> pathParams = new HashMap<>();
             pathParams.put("Search", "Search");
-            pathParams.put("query", searchQuery);
             String urlWithPaths = General.addPathsToUrl(url, pathParams);
 
             //map of all query params
@@ -170,16 +164,108 @@ public class StopPointService {
      * To check if you can access on the line, try using StopPoint/{id}/canReachOnline/{lineId}
      * (make sure direction is correct)
      * */
-    private StopPoints mapStopPointToObject(String jsonString) {
+    private List<StopPoint> mapStopPointToObject(String jsonString) {
         try {
             //maps json data to an object
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             Container container = objectMapper.readValue(jsonString, Container.class);
-            return container.getStopPoint();
+            return container.getStopPoint().getStopPoint();
         } catch (Exception e) {
             log.error("Something went wrong when trying to fetch and process JSON data for stop points", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Exception while processing JSON data", e);
+        }
+    }
+
+//    private String getStopPointIdsIn500mBox(ArrayOfLine arrayOfLine, String nameSearch){
+//        List<String> idsInBox = new ArrayList<>();
+//        List<StopPoint> stopPoints = mapStopPointToObject(
+//                getStopPointDataFromID(
+//                        concatenateIds(searchForStop(arrayOfLine, nameSearch))));
+//        for (StopPoint stopPoint: stopPoints) {
+//            BoundingBox boundingBox = new BoundingBox();
+//            boundingBox.setBoundingBoxForStop(stopPoint);
+//            //call GET to get all stopPoints in boundingBox
+//        }
+//        return idsInBox.toString();
+//    }
+
+//    private String concatenateIds(List<String> ids){
+//        StringBuilder joinedIds = new StringBuilder();
+//        int counter = 0;
+//        for (String id: ids) {
+//            if (counter < ids.size()){
+//                joinedIds.append(id).append("%2C");
+//            }else{
+//                joinedIds.append(id);
+//            }
+//            counter++;
+//        }
+//        return joinedIds.toString();
+//    }
+
+    //http://api.tfwm.org.uk/StopPoint/43000065304%2C43000065302%2C43000065301%2C43000065305?app_id=#&app_key=#
+    private String getStopPointDataFromIDs(String ids) {//ids is a concatenated string of all ids with "," in between
+        try {
+            Map<String, String> pathParams = new HashMap<>();
+            pathParams.put("ids", ids);
+            String urlWithPaths = General.addPathsToUrl(url, pathParams);
+
+            //map of all query params
+            Map<String, String> queryParams = new HashMap<>();
+            queryParams.put("app_id", API.TFWMAppId);
+            queryParams.put("app_key", API.TFWMAppKey);
+            queryParams.put("formatter", "json");
+
+            String finalUrl = General.buildURLWithPathQueryParams(urlWithPaths, pathParams, queryParams);
+
+            // Create ResponseEntity in format 'String' with the json data that is GOT
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    finalUrl,
+                    HttpMethod.GET,
+                    new HttpEntity<>(null),
+                    String.class);
+            return responseEntity.getBody();
+        } catch (Exception e) {
+            log.error("Error occurred when trying to fetch JSON data for stop points", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Exception while processing JSON data", e);
+        }
+
+    }
+
+    //gets the arrivals at a particular stop point
+    private String getStopPointById(String id) {
+        try {
+            //map of all path params (might be able to just concatenate the path to url)
+            Map<String, String> pathParams = new HashMap<>();
+            pathParams.put("Id", id);
+            pathParams.put("Arrivals", "Arrivals");
+
+            //String urlWithPaths = General.addPathsToUrl(url, pathParams);
+            String urlWithPaths = url + id + "/" + "Arrivals" + "/";
+
+            //map of all query params
+            Map<String, String> queryParams = new HashMap<>();
+            queryParams.put("app_id", API.TFWMAppId);
+            queryParams.put("app_key", API.TFWMAppKey);
+            queryParams.put("formatter", "json");
+            String finalUrl = General.buildURLWithPathQueryParams(urlWithPaths, pathParams, queryParams);
+            // Create ResponseEntity in format 'String' with the json data that is GOT
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    finalUrl,
+                    HttpMethod.GET,
+                    new HttpEntity<>(null),
+                    String.class);
+            System.out.println(responseEntity.getBody());
+            return responseEntity.getBody();
+        } catch (Exception e) {
+            log.error("something went wrong when trying to get from the TFWM", e);
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Exception while calling API",
+                    e
+            );
         }
     }
 
