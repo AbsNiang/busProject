@@ -9,19 +9,27 @@
 <table>
     <thead>
     <tr>
+        <th>Originator Name</th>
         <th>Originator ID</th>
+        <th>Destination Name</th>
         <th>Destination ID</th>
-        <th>Line-Route ID</th>
+        <th>Line Name</th>
+        <th>Line ID</th>
+        <th>Link To Details</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="connection : ${stopPointConnections}">
+        <td th:text="${connection.originName}"></td>
         <td th:text="${connection.originId}"></td>
+        <td th:text="${connection.destinationName}"></td>
         <td th:text="${connection.destinationId}"></td>
+        <td th:text="${connection.lineName}"></td>
         <td th:text="${connection.lineId}"></td>
-<!--        <td>-->
-<!--            <a th:href="@{/stop-point/details/{connectionId}(connectionId=${connection.id})}">View Details</a>-->
-<!--        </td>-->
+        <td>
+            <a th:href="@{/stop-point/details/{originName}/{originId}/{destinationName}/{destinationId}/{lineName}/{lineId}(originName=${connection.originName}, originId=${connection.originId}, destinationName=${connection.destinationName}, destinationId=${connection.destinationId}, lineName=${connection.lineName}, lineId=${connection.lineId})}">View
+                Details</a>
+        </td>
     </tr>
     </tbody>
 </table>

@@ -13,3 +13,11 @@ a.button {
 a.button:hover{
     background-color: darkgreen;
 }
+table {
+    border-collapse: collapse;
+}
+th, td {
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #4CAF50;
+}

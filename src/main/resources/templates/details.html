@@ -2,12 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Stop Point Connection Details</title>
+    <meta http-equiv="refresh" content="10">
 </head>
 <body>
 <h1>Stop Point Connection Details</h1>
 <div>
-    <!-- Display details of the selected StopPointConnection -->
-    <p th:text="${connectionDetails}"></p>
+    <p>Time to Live: <span th:text="${connectionDetails.timeToLive}"></span></p>
+    <p>Time to Station: <span th:text="${connectionDetails.timeToStation}"></span></p>
+    <p>Expected Arrival Time: <span th:text="${connectionDetails.expectedArrivalTime}"></span></p>
+    <p>Scheduled Arrival Time: <span th:text="${connectionDetails.scheduledArrivalTime}"></span></p>
+    <p>Towards: <span th:text="${connectionDetails.towards}"></span></p>
 </div>
 </body>
 </html>

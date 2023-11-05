@@ -42,7 +42,6 @@ public class StopPointService {
     @Autowired
     private LineService lineService;
 
-
     public String test() {
         ArrayOfLine arrayOfLine = lineService.sendDataToAnotherController();
         List<StopPointConnection> stopPointConnections = getStopPointConnections(
@@ -87,14 +86,17 @@ public class StopPointService {
                     }
                 }
             }
-            assert closestPrediction != null;
+            if (closestPrediction != null){
+                return new StopPointConnectionDetails(
+                        ZonedDateTime.parse(closestPrediction.getTimeToLive()).withZoneSameInstant(ZoneId.of("Europe/London")),
+                        Integer.parseInt(closestPrediction.getTimeToStation()),
+                        ZonedDateTime.parse(closestPrediction.getExpectedArrival()).withZoneSameInstant(ZoneId.of("Europe/London")),
+                        ZonedDateTime.parse(closestPrediction.getScheduledArrival()).withZoneSameInstant(ZoneId.of("Europe/London")),
+                        closestPrediction.getTowards());
+            }else{
+                return null;
+            }
 
-            return new StopPointConnectionDetails(
-                    ZonedDateTime.parse(closestPrediction.getTimeToLive()).withZoneSameInstant(ZoneId.of("Europe/London")),
-                    Integer.parseInt(closestPrediction.getTimeToStation()),
-                    ZonedDateTime.parse(closestPrediction.getExpectedArrival()).withZoneSameInstant(ZoneId.of("Europe/London")),
-                    ZonedDateTime.parse(closestPrediction.getScheduledArrival()).withZoneSameInstant(ZoneId.of("Europe/London")),
-                    closestPrediction.getTowards());
         } catch (Exception e) {
             log.error("Something went wrong when mapping the object", e);
             throw new ResponseStatusException(
@@ -106,7 +108,7 @@ public class StopPointService {
     }
 
     //gets the arrival time for a line at a stop point
-    private String getLineArrivalsForOriginStopPoint(StopPointConnection stopPointConnection) {
+    public String getLineArrivalsForOriginStopPoint(StopPointConnection stopPointConnection) {
         try {
             Map<String, String> pathParams = new HashMap<>();
             String urlWithPaths = lineUrl + stopPointConnection.getLineId() + "/Arrivals/"
@@ -143,22 +145,37 @@ public class StopPointService {
         List<StopPoint> originStopPoints = mapStopPointToObject(stopPointDataForOriginIds);
         List<StopPoint> destinationStopPoints = mapStopPointToObject(stopPointDataForDestinationIds);
 
-        List<StopPointConnection> stopPointConnections = new ArrayList<>();
-
         // Create a HashMap to store origin stop points and their associated lines
         Map<String, Set<String>> originLinesMap = new HashMap<>();
+        // Creates a HashMap to store origin stop point ids and their common names
+        Map<String, String> originIdToName = new HashMap<>();
+
         for (StopPoint originStop : originStopPoints) {
             Set<String> originLines = new HashSet<>();
             for (Identifier originLine : originStop.getLines().getIdentifier()) {
+                originIdToName.put(originStop.getId(), originStop.getCommonName() + "(" + originStop.getIndicator() + ")");
                 originLines.add(originLine.getId());
             }
             originLinesMap.put(originStop.getId(), originLines);
         }
 
-        String[] pairs = new String[2]; // 0 is origin, 1 is destination
+        // Map to store line identifiers and their corresponding names
+        Map<String, String> lineIdentifierMap = new HashMap<>();
+        for (StopPoint originStop : originStopPoints) {
+            for (Identifier originLine : originStop.getLines().getIdentifier()) {
+                lineIdentifierMap.put(originLine.getId(), originStop.getCommonName() + "(" + originStop.getIndicator() + ")");
+            }
+        }
+
+        List<StopPointConnection> stopPointConnections = new ArrayList<>();
+
+        // Create connections with identifier names
         for (StopPoint destinationStop : destinationStopPoints) {
+            Map<String, String> lineIdNamePair = new HashMap<>();// id, name
+
             Set<String> destinationLines = new HashSet<>();
             for (Identifier destinationLine : destinationStop.getLines().getIdentifier()) {
+                lineIdNamePair.put(destinationLine.getId(),destinationLine.getName());
                 destinationLines.add(destinationLine.getId());
             }
 
@@ -166,19 +183,19 @@ public class StopPointService {
                 Set<String> originLines = originLinesMap.get(originId);
                 for (String line : originLines) {
                     if (destinationLines.contains(line)) {
-                        StopPointConnection stopPointConnection = new StopPointConnection(originId,
+                        StopPointConnection stopPointConnection = new StopPointConnection(
+                                originIdToName.get(originId),
+                                originId,
+                                destinationStop.getCommonName() + "(" + destinationStop.getIndicator() + ")",
                                 destinationStop.getId(),
-                                line);
+                                lineIdNamePair.get(line),//lineIdentifierMap.get(line), // Use the line ID to get the identifier name
+                                line
+                        );
+
                         stopPointConnections.add(stopPointConnection);
                     }
                 }
             }
-        }
-
-        for (StopPointConnection stopPointConnection : stopPointConnections) {
-            System.out.println("Origin ID: " + stopPointConnection.getOriginId()
-                    + ", Destination ID: " + stopPointConnection.getDestinationId()
-                    + ", Line ID: " + stopPointConnection.getLineId());
         }
         return stopPointConnections;
     }
