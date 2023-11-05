@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Form</title>
+    <link rel="stylesheet" th:href="@{/stylesheets/homepage.css}">
+</head>
+<body>
+
+<form action="/stop-point/submitForm" th:action="@{/stop-point/submitForm}" th:object="${formData}" method="post">
+    <label for="origin">Origin:</label>
+    <input type="text" id="origin" th:field="*{origin}"><br><br>
+
+    <label for="destination">Destination:</label>
+    <input type="text" id="destination" th:field="*{destination}"><br><br>
+
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

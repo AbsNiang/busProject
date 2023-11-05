@@ -1,6 +1,6 @@
 package com.example.busProject.StopPoint;
 
-import com.example.busProject.StopPoint.Objects.StopPoint;
+import com.example.busProject.StopPoint.Objects.StopPointObject.StopPoint;
 
 public class BoundingBox {
     private double minLat;

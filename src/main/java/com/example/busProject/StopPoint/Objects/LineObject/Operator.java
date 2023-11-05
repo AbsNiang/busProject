@@ -1,4 +1,4 @@
-package com.example.busProject.StopPoint.Objects;
+package com.example.busProject.StopPoint.Objects.LineObject;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "Id"
 })
 public class Operator {
+
     @JsonProperty("Name")
     private String name;
     @JsonProperty("Code")
@@ -47,4 +48,5 @@ public class Operator {
     public void setId(String id) {
         this.id = id;
     }
+
 }

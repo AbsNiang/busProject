@@ -3,7 +3,7 @@ package com.example.busProject.Line;
 import com.example.busProject.API;
 import com.example.busProject.Line.Objects.ArrayOfLine;
 import com.example.busProject.Line.Objects.Container;
-import com.example.busProject.Timetable.General;
+import com.example.busProject.General;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -74,13 +74,12 @@ public class LineService {
 
     public ArrayOfLine sendDataToAnotherController() {
         try {
-            ArrayOfLine arrayOfLine = getLineRoutesAsObjects(getLineRouteData());
-//            HttpHeaders headers = new HttpHeaders();
+            //HttpHeaders headers = new HttpHeaders();
 //            headers.setContentType(MediaType.APPLICATION_JSON);
 //            HttpEntity<ArrayOfLine> request = new HttpEntity<>(arrayOfLine, headers);
 //            ResponseEntity<Void> response = restTemplate.postForEntity(
 //                    "http://localhost:8080/stop-point/uwu", request, Void.class);
-            return arrayOfLine;
+            return getLineRoutesAsObjects(getLineRouteData());
         } catch (HttpStatusCodeException e) {
             // Handle HTTP status codes (e.g., 404, 500)
             log.error("HTTP error occurred: " + e.getStatusCode());

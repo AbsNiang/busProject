@@ -1,4 +1,4 @@
-package com.example.busProject.StopPoint.Objects;
+package com.example.busProject.StopPoint.Objects.StopPointObject;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "StopPoints"
 })
-public class Container {
+public class StopPointContainer {
 
     @JsonProperty("StopPoints")
     private StopPoints stopPoints;

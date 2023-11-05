@@ -1,4 +1,4 @@
-package com.example.busProject.StopPoint.Objects;
+package com.example.busProject.StopPoint.Objects.StopPointObject;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

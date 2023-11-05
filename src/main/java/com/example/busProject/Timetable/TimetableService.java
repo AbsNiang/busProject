@@ -1,6 +1,7 @@
 package com.example.busProject.Timetable;
 
 import com.example.busProject.API;
+import com.example.busProject.General;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

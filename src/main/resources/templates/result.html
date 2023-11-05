@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Result</title>
+    <link rel="stylesheet" th:href="@{/stylesheets/homepage.css}">
+</head>
+<body>
+<h1>Stop Point Connections</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Originator ID</th>
+        <th>Destination ID</th>
+        <th>Line-Route ID</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="connection : ${stopPointConnections}">
+        <td th:text="${connection.originId}"></td>
+        <td th:text="${connection.destinationId}"></td>
+        <td th:text="${connection.lineId}"></td>
+<!--        <td>-->
+<!--            <a th:href="@{/stop-point/details/{connectionId}(connectionId=${connection.id})}">View Details</a>-->
+<!--        </td>-->
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

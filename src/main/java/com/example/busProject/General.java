@@ -1,8 +1,9 @@
-package com.example.busProject.Timetable;
+package com.example.busProject;
 
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -10,7 +11,17 @@ public class General {
 
     // Allows us to add as many queries/paths to the URL as needed
     public static String buildURLWithPathQueryParams(String urlWithPaths, Map<String, String> pathParams,
-                                               Map<String, String> queryParams) {
+                                                     Map<String, String> queryParams) {
+        if (queryParams == null) {//only auth. params needed
+            queryParams = new HashMap<>();
+            queryParams.put("app_id", API.TFWMAppId);
+            queryParams.put("app_key", API.TFWMAppKey);
+            queryParams.put("formatter", "json");
+        }else{
+            queryParams.put("app_id", API.TFWMAppId);
+            queryParams.put("app_key", API.TFWMAppKey);
+            queryParams.put("formatter", "json");
+        }
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(urlWithPaths);
         //Add path params
@@ -33,9 +44,9 @@ public class General {
         return extendedUrl.toString();
     }
 
-    public static String getInput(String prompt){
+    public static String getInput(String prompt) {
         Scanner input = new Scanner(System.in);
         System.out.println(prompt);
-        return  input.next();
+        return input.next();
     }
 }

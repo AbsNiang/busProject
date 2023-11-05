@@ -3,12 +3,12 @@ package com.example.busProject.StopPoint.Objects;
 public class StopPointConnection {
     private String originId;
     private String destinationId;
-    private String routeId;
+    private String lineId;
 
-    public StopPointConnection(String originId, String destinationId, String routeId) {
+    public StopPointConnection(String originId, String destinationId, String lineId) {
         this.originId = originId;
         this.destinationId = destinationId;
-        this.routeId = routeId;
+        this.lineId = lineId;
     }
 
     public String getOriginId() {
@@ -27,11 +27,11 @@ public class StopPointConnection {
         this.destinationId = destinationId;
     }
 
-    public String getRouteId() {
-        return routeId;
+    public String getLineId() {
+        return lineId;
     }
 
-    public void setRouteId(String routeId) {
-        this.routeId = routeId;
+    public void setLineId(String lineId) {
+        this.lineId = lineId;
     }
 }
